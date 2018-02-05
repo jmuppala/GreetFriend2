@@ -1,5 +1,6 @@
 package hk.ust.cse.comp4521.greetfriend;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -75,9 +76,19 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
             case R.id.greetButton:
 
-                // set the string being displayed by the TextView to the greeting
-                // message for the friend
-                textMessage.setText("Good Day "+friendName+"!");
+                // create a new intent. The first parameter is the Context which is the current Activity.
+                // Hence we use "this". The second parameter is the Activity class that we wish to start.
+                // Hence it is specified as ShowMessage.class
+                Intent in = new Intent(this,ShowMessage.class);
+
+                // Add the message as a payload to the Intent. We add data to be carried by the intern using
+                // the putExtra() methods. The data is specified as a key-value pair. The first parameter is
+                // the key, specified as a string, and the second parameter is the value.
+                in.putExtra("message", getString(R.string.greetstring) + " " + friendName + "!");
+
+                // We start the new activity by calling this method to inform the Android framework to start
+                // the new activity. The parameter is the Intent we just created earlier
+                startActivity(in);
 
                 break;
 
