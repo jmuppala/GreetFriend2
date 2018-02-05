@@ -9,16 +9,24 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ListView;
 import android.widget.TextView;
 
-public class MainActivity extends AppCompatActivity implements View.OnClickListener {
+import java.util.List;
+
+public class MainActivity extends AppCompatActivity {
 
     Button greetButton;
+    String [] names;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -33,8 +41,45 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             }
         });
 
-        greetButton = (Button) findViewById(R.id.greetButton);
-        greetButton.setOnClickListener(this);
+        // Construct a string array from the String Array resource "friends" in the
+        // strings.xml file
+        names = getResources().getStringArray(R.array.friends);
+
+        ListView friendListView = (ListView) findViewById(R.id.friendListView);
+
+        // This method call sets the names string array as the source of the names
+        // for the list of items in the listview. The ArrayAdapter object is used
+        // to adapt the string array and construct a list of layout items that are
+        // then used by the ListView of the ListActivity to construct the list of friends.
+        // The layout of each item is specified by the friend_item.xml file
+        friendListView.setAdapter( new ArrayAdapter<String>(this, R.layout.friend_item, names));
+        friendListView.setOnItemClickListener(
+                new AdapterView.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
+
+                        // The parameter "id" indicates the index of the item that was selected from
+                        // the list of friends. This is used to index into the names[] array to get
+                        // the name of the friend selected. Rest of the code is similar to the earlier
+                        // exercise.
+
+                        // create a new intent. The first parameter is the Context which is the current Activity.
+                        // Hence we use "this". The second parameter is the Activity class that we wish to start.
+                        // Hence it is specified as ShowMessage.class
+                        Intent in = new Intent(getApplicationContext(), ShowMessage.class);
+
+                        // Add the message as a payload to the Intent. We add data to be carried by the intern using
+                        // the putExtra() methods. The data is specified as a key-value pair. The first parameter is
+                        // the key, specified as a string, and the second parameter is the value.
+                        in.putExtra("message", getString(R.string.greetstring) + " " + names[(int) id] + "!");
+
+                        // We start the new activity by calling this method to inform the Android framework to start
+                        // the new activity. The parameter is the Intent we just created earlier
+                        startActivity(in);
+                    }
+
+                }
+        );
     }
 
     @Override
@@ -59,42 +104,4 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         return super.onOptionsItemSelected(item);
     }
 
-    @Override
-    public void onClick(View view) {
-
-        // get a reference to the TextView on the UI
-        TextView textMessage = (TextView) findViewById(R.id.textMessage);
-
-        //get a reference to the EditText so that we can read in the value typed
-        // by the user
-        EditText editFriendName = (EditText) findViewById(R.id.editFriendName);
-
-        // get the name of the friend typed in by the user in the EditText field
-        String friendName = editFriendName.getText().toString();
-
-        switch (view.getId()) {
-
-            case R.id.greetButton:
-
-                // create a new intent. The first parameter is the Context which is the current Activity.
-                // Hence we use "this". The second parameter is the Activity class that we wish to start.
-                // Hence it is specified as ShowMessage.class
-                Intent in = new Intent(this,ShowMessage.class);
-
-                // Add the message as a payload to the Intent. We add data to be carried by the intern using
-                // the putExtra() methods. The data is specified as a key-value pair. The first parameter is
-                // the key, specified as a string, and the second parameter is the value.
-                in.putExtra("message", getString(R.string.greetstring) + " " + friendName + "!");
-
-                // We start the new activity by calling this method to inform the Android framework to start
-                // the new activity. The parameter is the Intent we just created earlier
-                startActivity(in);
-
-                break;
-
-            default:
-
-                break;
-        }
-    }
 }
